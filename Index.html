@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Стасик и Вейпинг</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 10px;
+            border-radius: 8px;
+            display: block;
+            width: 200px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #score {
+            font-weight: bold;
+            color: #FF5733;
+            font-size: 28px;
+        }
+
+        #clickPower {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 20px;
+        }
+
+        #upgrades {
+            margin-top: 20px;
+        }
+
+        .upgrade-button {
+            font-size: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .upgrade-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+    <h1>Стасик и Вейпинг</h1>
+    <p>Пропущено в очко: <span id="score">0</span></p>
+    <p>Сила клика: <span id="clickPower">1x</span></p>
+    <button id="vapeButton">Вейпить</button>
+    <div id="upgrades">
+        <button class="upgrade-button" id="upgrade20">Усилить на 20% (100 очков)</button>
+        <button class="upgrade-button" id="upgrade40">Усилить на 40% (200 очков)</button>
+        <button class="upgrade-button" id="upgrade60">Усилить на 60% (300 очков)</button>
+        <button class="upgrade-button" id="upgradeAll">Усилить на все очки</button>
+        <button class="upgrade-button" id="resetButton">Обнулиться дедовским самогоном</button>
+    </div>
+    <script>
+        const vapeButton = document.getElementById("vapeButton");
+        const scoreDisplay = document.getElementById("score");
+        const clickPowerDisplay = document.getElementById("clickPower");
+        const upgradeButtons = document.getElementsByClassName("upgrade-button");
+        const resetButton = document.getElementById("resetButton");
+
+        let score = parseInt(localStorage.getItem("score")) || 0;
+        let clickPower = parseFloat(localStorage.getItem("clickPower")) || 1.0;
+
+        scoreDisplay.textContent = score;
+        clickPowerDisplay.textContent = `${clickPower.toFixed(1)}x`;
+
+        vapeButton.addEventListener("click", () => {
+            score += clickPower;
+            scoreDisplay.textContent = score.toFixed(0);
+            localStorage.setItem("score", score);
+        });
+
+        function buyUpgrade(cost, powerIncrease) {
+            if (score >= cost) {
+                score -= cost;
+                clickPower += powerIncrease;
+                scoreDisplay.textContent = score.toFixed(0);
+                clickPowerDisplay.textContent = `${clickPower.toFixed(1)}x`;
+                localStorage.setItem("score", score);
+                localStorage.setItem("clickPower", clickPower);
+            }
+        }
+
+        upgradeButtons[0].addEventListener("click", () => {
+            buyUpgrade(100, 0.2);
+        });
+
+        upgradeButtons[1].addEventListener("click", () => {
+            buyUpgrade(200, 0.4);
+        });
+
+        upgradeButtons[2].addEventListener("click", () => {
+            buyUpgrade(300, 0.6);
+        });
+
+        upgradeButtons[3].addEventListener("click", () => {
+            const maxUpgrades = Math.floor(score / 100);
+            if (maxUpgrades > 0) {
+                buyUpgrade(maxUpgrades * 100, maxUpgrades * 0.2);
+            }
+        });
+
+        resetButton.addEventListener("click", () => {
+            // Сбросить достижения
+            localStorage.removeItem("score");
+            localStorage.removeItem("clickPower");
+            score = 0;
+            clickPower = 1.0;
+            scoreDisplay.textContent = score;
+            clickPowerDisplay.textContent = `${clickPower.toFixed(1)}x`;
+        });
+    </script>
+</body>
+</html>
+ 
